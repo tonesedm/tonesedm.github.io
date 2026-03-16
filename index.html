@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tonesedm - Welcome</title>
+    <meta name="description" content="Official website of music artist TonesEDM">
+    <meta name="robots" content="index, nofollow">
+    <link rel="canonical" href="https://tonesedm.github.io">
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="fractalCanvas" width="800" height="800"></canvas>
+    <script>
+        const canvas = document.getElementById('fractalCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const maxIter = 100;
+
+        function mandelbrot(xMin, xMax, yMin, yMax, width, height) {
+            const imgData = ctx.createImageData(width, height);
+            const data = imgData.data;
+
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
+                    let zx = (xMin + (x / width) * (xMax - xMin));
+                    let zy = (yMin + (y / height) * (yMax - yMin));
+                    let i = 0;
+
+                    while (zx * zx + zy * zy < 4 && i < maxIter) {
+                        let tmp = zx * zx - zy * zy + (xMin + (x / width) * (xMax - xMin));
+                        zy = 2 * zx * zy + (yMin + (y / height) * (yMax - yMin));
+                        zx = tmp;
+                        i++;
+                    }
+
+                    const pixelIndex = (x + y * width) * 4;
+                    const color = i === maxIter ? 0 : (255 * i) / maxIter;
+                    data[pixelIndex] = color; // Red
+                    data[pixelIndex + 1] = 0; // Green
+                    data[pixelIndex + 2] = color; // Blue
+                    data[pixelIndex + 3] = 255; // Alpha
+                }
+            }
+
+            ctx.putImageData(imgData, 0, 0);
+        }
+
+        mandelbrot(-2.0, 1.0, -1.5, 1.5, canvas.width, canvas.height);
+    </script>
+</body>
+</html>
